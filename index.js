@@ -30,8 +30,8 @@ async function run() {
     const propertyCollection = db.collection("properties");
 
     // User Registration
-    app.post("/api/v1/register", async (req, res) => {
-      const { name, email, password } = req.body;
+    app.post("/register", async (req, res) => {
+      const { name, email, password, phone } = req.body;
 
       // Check if email already exists
       const existingUser = await collection.findOne({ email });
@@ -46,7 +46,13 @@ async function run() {
       const hashedPassword = await bcrypt.hash(password, 10);
 
       // Insert user into the database
-      await collection.insertOne({ name, email, password: hashedPassword });
+      await collection.insertOne({
+        name,
+        email,
+        phone,
+        password: hashedPassword,
+        role: "user",
+      });
 
       res.status(201).json({
         success: true,
@@ -55,7 +61,7 @@ async function run() {
     });
 
     // User Login
-    app.post("/api/v1/login", async (req, res) => {
+    app.post("/login", async (req, res) => {
       const { email, password } = req.body;
 
       // Find user by email
